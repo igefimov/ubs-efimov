@@ -54,6 +54,7 @@ public class RoundtripSearchStepDefinition {
 
     /**
      * Initialize webdriver for Firefox browser in the headless mode
+     *
      * @throws UnsupportedOsException Currently supported macOS only
      */
     @Before
@@ -63,15 +64,14 @@ public class RoundtripSearchStepDefinition {
         if (OS.startsWith("MAC")) {
             System.setProperty("webdriver.gecko.driver",
                     Paths.get(WEB_DRIVER_PATH).toString());
-        }
-        else {
+        } else {
             throw new UnsupportedOsException("Unsupported OS.\n" +
                     "Currently we support only macOS");
         }
         LOG.info("Set Firefox Headless mode as TRUE");
         FirefoxOptions options = new FirefoxOptions();
         options.setHeadless(true);
-        System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
+        System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE, "/dev/null");
 
         LOG.info("Starting browser");
         driver = new FirefoxDriver(options);
@@ -81,6 +81,7 @@ public class RoundtripSearchStepDefinition {
 
     /**
      * Take screnshot and quit the browser
+     *
      * @throws IOException for the non-existing path to screenshots
      */
     @After
@@ -93,11 +94,12 @@ public class RoundtripSearchStepDefinition {
 
     /**
      * Validate input parameters provided by customer in the Example section
-     * @param originAirport represents code of origin airport
+     *
+     * @param originAirport      represents code of origin airport
      * @param destinationAirport represents code of destination airport
-     * @param departureDate represents departure date in format YYYY-MM-DD
-     * @param returnDate represents return date in format YYYY-MM-DD
-     * @param maxPrice represents maximum price that customer is willing to pay
+     * @param departureDate      represents departure date in format YYYY-MM-DD
+     * @param returnDate         represents return date in format YYYY-MM-DD
+     * @param maxPrice           represents maximum price that customer is willing to pay
      * @throws ParseException for the incorrect date format
      */
     @Given("Valid parameters are provided {string} {string} {string} {string} {int}")
@@ -120,7 +122,7 @@ public class RoundtripSearchStepDefinition {
         Assert.assertTrue("Can't return before departure", rDate.after(dDate) || rDate.equals(dDate));
 
         Date today = sdf.parse(String.valueOf(LocalDate.now()));
-        Assert.assertTrue("You can't travel in the past",dDate.after(today) || dDate.equals(today));
+        Assert.assertTrue("You can't travel in the past", dDate.after(today) || dDate.equals(today));
 
         Date limit = sdf.parse(String.valueOf(LocalDate.now().plusYears(1)));
         Assert.assertTrue("your trip must start and finish within 1 year of today", rDate.before(limit));
@@ -152,8 +154,9 @@ public class RoundtripSearchStepDefinition {
     /**
      * Verify that price of flights displays by search engine is always lower that on entered by customer
      * There are 2 corner cases that should display no results:
-     *  - there is no connection below the requested price - POSSIBLE BUG IN KAYAK WEB SITE
-     *  - there is no connection between 2 cities
+     * - there is no connection below the requested price - POSSIBLE BUG IN KAYAK WEB SITE
+     * - there is no connection between 2 cities
+     *
      * @param maxPrice is set by customer
      */
     @Then("Roundtrip flights below price {int} are displayed")
@@ -165,12 +168,11 @@ public class RoundtripSearchStepDefinition {
             LOG.info("Search engine maximum price is " + numberOnly);
             Assert.assertTrue(String.format("Found price should be below expected: %d < %d", numberOnly, maxPrice),
                     numberOnly < maxPrice);
-        }
-        else {
+        } else {
             wait.until(ExpectedConditions.or(
                     visibilityOfElementLocated(By.className(NOT_MATCHING_FLIGHTS_FOUND_CLASS)),
                     visibilityOfElementLocated(By.className(NO_FLIGHTS_FOUND_CLASS))
-                    ));
+            ));
             LOG.info("No matching flights found");
         }
     }

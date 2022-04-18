@@ -24,6 +24,7 @@ Running the tests
 
 Acknowledgments
 
-- Tested on Ubuntu macOS Big Sur
+- Tested on macOS Big Sur locally
+- Tested on dockerized Ubuntu image with non-significant code changes
 - Binary geckodriver is part of the VCS repo
 - No multi city support
